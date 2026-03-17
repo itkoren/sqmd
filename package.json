@@ -1,5 +1,5 @@
 {
-  "name": "sqmd",
+  "name": "@itkoren/sqmd",
   "version": "0.1.0",
   "description": "Local semantic search engine over Markdown files",
   "type": "module",
