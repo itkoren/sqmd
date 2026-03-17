@@ -28,6 +28,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Configure npm for OIDC trusted publishing
+        run: sed -i '/authToken/d' ~/.npmrc
 
       - name: Install dependencies
         run: npm ci
