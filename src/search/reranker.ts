@@ -23,18 +23,14 @@ export class CrossEncoderReranker {
     env.cacheDir = this.cacheDir;
 
     // text-classification pipeline for cross-encoder models
-    this.pipeline = await pipeline('text-classification', this.modelName, {
+    this.pipeline = (await pipeline('text-classification', this.modelName, {
       dtype: 'fp32',
-    }) as unknown as CrossEncoderPipeline;
+    })) as unknown as CrossEncoderPipeline;
 
     return this.pipeline;
   }
 
-  async rerank(
-    query: string,
-    results: SearchResult[],
-    topN: number
-  ): Promise<SearchResult[]> {
+  async rerank(query: string, results: SearchResult[], topN: number): Promise<SearchResult[]> {
     if (results.length === 0) return [];
 
     const pipe = await this.loadPipeline();
@@ -59,7 +55,7 @@ export class CrossEncoderReranker {
 let rerankerInstance: CrossEncoderReranker | null = null;
 
 export function getReranker(modelName: string, cacheDir: string): CrossEncoderReranker {
-  if (!rerankerInstance || rerankerInstance['modelName'] !== modelName) {
+  if (!rerankerInstance || rerankerInstance.modelName !== modelName) {
     rerankerInstance = new CrossEncoderReranker(modelName, cacheDir);
   }
   return rerankerInstance;

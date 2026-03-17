@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SearchResult } from '../../src/store/schema.js';
 
 vi.mock('@huggingface/transformers', () => ({
-  pipeline: vi.fn().mockResolvedValue(
-    (pairs: Array<[string, string]>) =>
+  pipeline: vi
+    .fn()
+    .mockResolvedValue((pairs: Array<[string, string]>) =>
       Promise.resolve(pairs.map((_, i) => ({ score: 1.0 - i * 0.1 })))
-  ),
+    ),
   env: { cacheDir: '' },
 }));
 

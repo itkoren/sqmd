@@ -1,5 +1,5 @@
-import { Hono } from 'hono';
 import type * as lancedb from '@lancedb/lancedb';
+import { Hono } from 'hono';
 import { getDbStats } from '../../store/db.js';
 
 const startTime = Date.now();

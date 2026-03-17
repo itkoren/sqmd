@@ -1,20 +1,20 @@
 import * as fs from 'node:fs';
+import type * as lancedb from '@lancedb/lancedb';
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import {
   CallToolRequestSchema,
-  ListToolsRequestSchema,
   ListResourcesRequestSchema,
+  ListToolsRequestSchema,
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import type * as lancedb from '@lancedb/lancedb';
-import type { Embedder } from '../embeddings/types.js';
 import type { Config } from '../config/schema.js';
-import { getChunksTable, getFilesTable, getDbStats } from '../store/db.js';
-import { getAllFiles, getFileById, getFileChunks } from '../store/reader.js';
-import { hybridSearch } from '../search/hybrid.js';
-import { IndexPipeline } from '../ingestion/pipeline.js';
+import type { Embedder } from '../embeddings/types.js';
 import { hashPath } from '../ingestion/fingerprint.js';
+import { IndexPipeline } from '../ingestion/pipeline.js';
 import { buildContext } from '../rag/context-builder.js';
+import { hybridSearch } from '../search/hybrid.js';
+import { getChunksTable, getDbStats, getFilesTable } from '../store/db.js';
+import { getAllFiles, getFileById, getFileChunks } from '../store/reader.js';
 
 export function registerTools(
   server: Server,
@@ -128,11 +128,11 @@ export function registerTools(
     try {
       switch (name) {
         case 'search_documents': {
-          const query = String(toolArgs['query'] ?? '');
-          const topK = Number(toolArgs['top_k'] ?? config.search.default_top_k);
-          const mode = (toolArgs['mode'] as 'hybrid' | 'vector' | 'fts') ?? 'hybrid';
-          const filterPath = toolArgs['filter_path'] ? String(toolArgs['filter_path']) : undefined;
-          const includeContext = Boolean(toolArgs['include_context'] ?? false);
+          const query = String(toolArgs.query ?? '');
+          const topK = Number(toolArgs.top_k ?? config.search.default_top_k);
+          const mode = (toolArgs.mode as 'hybrid' | 'vector' | 'fts') ?? 'hybrid';
+          const filterPath = toolArgs.filter_path ? String(toolArgs.filter_path) : undefined;
+          const includeContext = Boolean(toolArgs.include_context ?? false);
 
           const chunksTable = await getChunksTable(db);
           const results = await hybridSearch(chunksTable, embedder, {
@@ -172,8 +172,8 @@ export function registerTools(
         }
 
         case 'get_document': {
-          const filePath = String(toolArgs['file_path'] ?? '');
-          const section = toolArgs['section'] ? String(toolArgs['section']) : undefined;
+          const filePath = String(toolArgs.file_path ?? '');
+          const section = toolArgs.section ? String(toolArgs.section) : undefined;
 
           const fileId = hashPath(filePath);
           const filesTable = await getFilesTable(db);
@@ -208,8 +208,8 @@ export function registerTools(
         }
 
         case 'list_documents': {
-          const pathPrefix = toolArgs['path_prefix'] ? String(toolArgs['path_prefix']) : undefined;
-          const limit = Number(toolArgs['limit'] ?? 20);
+          const pathPrefix = toolArgs.path_prefix ? String(toolArgs.path_prefix) : undefined;
+          const limit = Number(toolArgs.limit ?? 20);
 
           const filesTable = await getFilesTable(db);
           let files = await getAllFiles(filesTable);
@@ -231,8 +231,8 @@ export function registerTools(
         }
 
         case 'trigger_index': {
-          const paths = (toolArgs['paths'] as string[] | undefined) ?? config.paths.watch_dirs;
-          const force = Boolean(toolArgs['force'] ?? false);
+          const paths = (toolArgs.paths as string[] | undefined) ?? config.paths.watch_dirs;
+          const force = Boolean(toolArgs.force ?? false);
 
           const pipeline = new IndexPipeline(config);
           const result = await pipeline.run({ paths, force });

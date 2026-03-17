@@ -88,9 +88,7 @@ describe('scanDirectory', () => {
   });
 
   it('should respect custom ignorePatterns', async () => {
-    const results = await collectAll(
-      scanDirectory(tmpDir, ['.md'], ['**/sub/**'])
-    );
+    const results = await collectAll(scanDirectory(tmpDir, ['.md'], ['**/sub/**']));
     const names = results.map((p) => path.basename(p));
     expect(names).not.toContain('c.md');
     expect(names).toContain('a.md');

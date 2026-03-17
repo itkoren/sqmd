@@ -1,5 +1,5 @@
-import type { SearchResult } from '../store/schema.js';
 import { estimateTokens } from '../ingestion/chunker.js';
+import type { SearchResult } from '../store/schema.js';
 
 export function buildContext(results: SearchResult[], maxTokens: number): string {
   const parts: string[] = [];

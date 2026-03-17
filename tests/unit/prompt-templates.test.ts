@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  buildRagPrompt,
-  formatResults,
-  ragSystemPrompt,
-} from '../../src/rag/prompt-templates.js';
+import { buildRagPrompt, formatResults, ragSystemPrompt } from '../../src/rag/prompt-templates.js';
 import type { SearchResult } from '../../src/store/schema.js';
 
 function makeResult(overrides: Partial<SearchResult> = {}): SearchResult {

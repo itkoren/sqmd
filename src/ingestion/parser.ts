@@ -1,8 +1,7 @@
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import { visit } from 'unist-util-visit';
-import type { Root, Heading, Paragraph, Text, Node } from 'mdast';
 import * as path from 'node:path';
+import type { Heading, Node, Root } from 'mdast';
+import remarkParse from 'remark-parse';
+import { unified } from 'unified';
 
 export interface Section {
   headingPath: string;
@@ -67,10 +66,7 @@ export function parseMarkdown(content: string, filePath: string): ParsedDocument
       .join('\n\n');
 
     const parentHeadings = headingStack.map((h) => h.text);
-    const headingPath =
-      headingStack.length > 0
-        ? headingStack.map((h) => h.text).join(' > ')
-        : '';
+    const headingPath = headingStack.length > 0 ? headingStack.map((h) => h.text).join(' > ') : '';
 
     sections.push({
       headingPath,
@@ -131,10 +127,7 @@ export function parseMarkdown(content: string, filePath: string): ParsedDocument
 
   // Flush last section
   if (currentSectionNodes.length > 0 || (sections.length === 0 && children.length > 0)) {
-    const lastLine =
-      children.length > 0
-        ? getNodeEnd(children[children.length - 1]!)
-        : 0;
+    const lastLine = children.length > 0 ? getNodeEnd(children[children.length - 1]!) : 0;
     flushSection(lastLine);
   }
 

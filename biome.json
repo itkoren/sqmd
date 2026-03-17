@@ -3,7 +3,7 @@
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["dist/**", "node_modules/**", "coverage/**"]
+    "ignore": ["dist/**", "node_modules/**", "coverage/**", ".claude/**"]
   },
   "formatter": {
     "enabled": true,
@@ -21,6 +21,7 @@
         "noUnusedImports": "error"
       },
       "suspicious": { "noExplicitAny": "warn", "noConsoleLog": "off" },
+      "performance": { "noDelete": "off" },
       "style": { "noNonNullAssertion": "off", "useConst": "error" }
     }
   },

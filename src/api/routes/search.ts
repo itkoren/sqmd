@@ -1,17 +1,13 @@
-import { Hono } from 'hono';
 import type * as lancedb from '@lancedb/lancedb';
-import { SearchRequestSchema } from '../models.js';
-import { hybridSearch } from '../../search/hybrid.js';
-import { getChunksTable } from '../../store/db.js';
-import { getReranker } from '../../search/reranker.js';
-import type { Embedder } from '../../embeddings/types.js';
+import { Hono } from 'hono';
 import type { Config } from '../../config/schema.js';
+import type { Embedder } from '../../embeddings/types.js';
+import { hybridSearch } from '../../search/hybrid.js';
+import { getReranker } from '../../search/reranker.js';
+import { getChunksTable } from '../../store/db.js';
+import { SearchRequestSchema } from '../models.js';
 
-export function createSearchRouter(
-  db: lancedb.Connection,
-  embedder: Embedder,
-  config: Config
-) {
+export function createSearchRouter(db: lancedb.Connection, embedder: Embedder, config: Config) {
   const router = new Hono();
 
   const handleSearch = async (
@@ -111,7 +107,7 @@ export function createSearchRouter(
       return c.json({ error: 'Missing query parameter: q' }, 400);
     }
 
-    const top_k = c.req.query('top_k') ? parseInt(c.req.query('top_k')!, 10) : undefined;
+    const top_k = c.req.query('top_k') ? Number.parseInt(c.req.query('top_k')!, 10) : undefined;
     const mode = c.req.query('mode') as 'hybrid' | 'vector' | 'fts' | undefined;
     const filter_path = c.req.query('filter_path');
     const include_context = c.req.query('include_context') === 'true';

@@ -22,9 +22,9 @@ export class TransformersEmbedder implements Embedder {
     // Configure cache directory
     env.cacheDir = this.cacheDir;
 
-    this.pipeline = await pipeline('feature-extraction', this.modelName, {
+    this.pipeline = (await pipeline('feature-extraction', this.modelName, {
       dtype: 'fp32',
-    }) as unknown as PipelineType;
+    })) as unknown as PipelineType;
 
     return this.pipeline;
   }

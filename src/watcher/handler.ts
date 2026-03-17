@@ -1,10 +1,9 @@
 import * as fs from 'node:fs';
 import type * as lancedb from '@lancedb/lancedb';
 import type { Config } from '../config/schema.js';
-import { IndexPipeline } from '../ingestion/pipeline.js';
 import { hashPath } from '../ingestion/fingerprint.js';
+import { IndexPipeline } from '../ingestion/pipeline.js';
 import { deleteFile } from '../store/writer.js';
-import { getFilesTable } from '../store/db.js';
 
 type DebouncedHandler = {
   timer: ReturnType<typeof setTimeout> | null;
@@ -96,14 +95,9 @@ export class FileChangeHandler {
         },
       });
 
-      console.log(
-        `[watcher] Done: ${result.indexed} indexed, ${result.errors.length} errors`
-      );
+      console.log(`[watcher] Done: ${result.indexed} indexed, ${result.errors.length} errors`);
     } catch (err) {
-      console.error(
-        '[watcher] Pipeline error:',
-        err instanceof Error ? err.message : String(err)
-      );
+      console.error('[watcher] Pipeline error:', err instanceof Error ? err.message : String(err));
     }
   }
 }

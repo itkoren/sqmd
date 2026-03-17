@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-import { Command } from 'commander';
-import chalk from 'chalk';
-import * as path from 'node:path';
 import * as os from 'node:os';
+import * as path from 'node:path';
+import chalk from 'chalk';
+import { Command } from 'commander';
 import { loadConfig, writeDefaultConfig } from './config/loader.js';
-import { getDb, getChunksTable, getFilesTable, getDbStats } from './store/db.js';
-import { getAllFiles } from './store/reader.js';
-import { IndexPipeline } from './ingestion/pipeline.js';
-import { TransformersEmbedder } from './embeddings/transformers.js';
 import { OllamaEmbedder } from './embeddings/ollama.js';
+import { TransformersEmbedder } from './embeddings/transformers.js';
 import type { Embedder } from './embeddings/types.js';
+import { IndexPipeline } from './ingestion/pipeline.js';
+import { getChunksTable, getDb, getDbStats, getFilesTable } from './store/db.js';
+import { getAllFiles } from './store/reader.js';
 
 const program = new Command();
 
@@ -52,16 +52,16 @@ program
     });
 
     console.log('');
-    console.log(chalk.green(`Done!`));
+    console.log(chalk.green('Done!'));
     console.log(`  Indexed: ${result.indexed}`);
     console.log(`  Skipped: ${result.skipped}`);
     console.log(`  Errors: ${result.errors.length}`);
 
     if (result.errors.length > 0) {
       console.log(chalk.red('\nErrors:'));
-      result.errors.forEach((e) => {
+      for (const e of result.errors) {
         console.log(chalk.red(`  ${e.filePath}: ${e.error}`));
-      });
+      }
     }
 
     if (opts.watch) {
@@ -101,7 +101,7 @@ program
 
     const { hybridSearch } = await import('./search/hybrid.js');
 
-    const topK = parseInt(opts.topK, 10);
+    const topK = Number.parseInt(opts.topK, 10);
     const mode = opts.mode as 'hybrid' | 'vector' | 'fts';
 
     console.log(chalk.blue(`Searching for: "${query}"`));
@@ -129,7 +129,11 @@ program
       if (result.heading_path) {
         console.log(chalk.cyan(`   § ${result.heading_path}`));
       }
-      console.log(chalk.gray(`   Score: ${result.score.toFixed(4)} | Lines ${result.line_start}-${result.line_end}`));
+      console.log(
+        chalk.gray(
+          `   Score: ${result.score.toFixed(4)} | Lines ${result.line_start}-${result.line_end}`
+        )
+      );
       console.log('');
 
       // Show snippet
@@ -152,7 +156,7 @@ program
     const config = loadConfig(opts.config);
 
     if (opts.host) config.api.host = opts.host;
-    if (opts.port) config.api.port = parseInt(opts.port, 10);
+    if (opts.port) config.api.port = Number.parseInt(opts.port, 10);
 
     const db = await getDb(config.paths.db_path);
 
@@ -178,7 +182,7 @@ program
 
     const { host, port } = config.api;
 
-    console.log(chalk.blue(`Starting sqmd API server`));
+    console.log(chalk.blue('Starting sqmd API server'));
     console.log(chalk.gray(`Listening on http://${host}:${port}`));
 
     serve({
@@ -211,7 +215,7 @@ program
 
     await startMcpServer(db, embedder, config, {
       transport: opts.transport as 'stdio' | 'sse',
-      port: opts.port ? parseInt(opts.port, 10) : undefined,
+      port: opts.port ? Number.parseInt(opts.port, 10) : undefined,
     });
   });
 
@@ -245,7 +249,10 @@ program
       console.log(`Watch dirs:    ${config.paths.watch_dirs.join(', ')}`);
       console.log(`Embedder:      ${config.embeddings.backend} / ${config.embeddings.model}`);
     } catch (err) {
-      console.log(chalk.red('Error reading status:'), err instanceof Error ? err.message : String(err));
+      console.log(
+        chalk.red('Error reading status:'),
+        err instanceof Error ? err.message : String(err)
+      );
       console.log(chalk.gray('Database may not be initialized. Run `sqmd index` first.'));
     }
   });

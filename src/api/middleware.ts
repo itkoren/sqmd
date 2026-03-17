@@ -1,4 +1,4 @@
-import type { Context, Next, MiddlewareHandler } from 'hono';
+import type { Context, MiddlewareHandler, Next } from 'hono';
 
 export function createApiKeyMiddleware(apiKey: string): MiddlewareHandler {
   return async (c: Context, next: Next) => {
@@ -37,10 +37,7 @@ export function corsMiddleware(): MiddlewareHandler {
   return async (c: Context, next: Next) => {
     c.res.headers.set('Access-Control-Allow-Origin', '*');
     c.res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    c.res.headers.set(
-      'Access-Control-Allow-Headers',
-      'Content-Type, Authorization, X-API-Key'
-    );
+    c.res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key');
 
     if (c.req.method === 'OPTIONS') {
       return c.body(null, 204);

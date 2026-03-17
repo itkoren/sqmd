@@ -1,11 +1,11 @@
-import * as lancedb from '@lancedb/lancedb';
 import * as fs from 'node:fs';
+import * as lancedb from '@lancedb/lancedb';
 import { CHUNKS_SCHEMA, FILES_SCHEMA } from './schema.js';
 
 const CHUNKS_TABLE = 'chunks';
 const FILES_TABLE = 'files';
 
-let connectionCache: Map<string, lancedb.Connection> = new Map();
+const connectionCache: Map<string, lancedb.Connection> = new Map();
 
 export async function getDb(dbPath: string): Promise<lancedb.Connection> {
   if (connectionCache.has(dbPath)) {

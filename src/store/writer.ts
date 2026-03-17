@@ -1,11 +1,8 @@
-import * as lancedb from '@lancedb/lancedb';
-import type { ChunkRecord, FileRecord } from './schema.js';
+import type * as lancedb from '@lancedb/lancedb';
 import { getChunksTable, getFilesTable } from './db.js';
+import type { ChunkRecord, FileRecord } from './schema.js';
 
-export async function upsertChunks(
-  table: lancedb.Table,
-  chunks: ChunkRecord[]
-): Promise<void> {
+export async function upsertChunks(table: lancedb.Table, chunks: ChunkRecord[]): Promise<void> {
   if (chunks.length === 0) return;
 
   const fileId = chunks[0]!.file_id;
@@ -21,10 +18,7 @@ export async function upsertChunks(
   await table.add(chunks as unknown as Record<string, unknown>[]);
 }
 
-export async function upsertFile(
-  table: lancedb.Table,
-  file: FileRecord
-): Promise<void> {
+export async function upsertFile(table: lancedb.Table, file: FileRecord): Promise<void> {
   // Delete existing record for this file
   try {
     await table.delete(`file_id = '${file.file_id}'`);
@@ -36,10 +30,7 @@ export async function upsertFile(
   await table.add([file] as unknown as Record<string, unknown>[]);
 }
 
-export async function deleteFile(
-  db: lancedb.Connection,
-  fileId: string
-): Promise<void> {
+export async function deleteFile(db: lancedb.Connection, fileId: string): Promise<void> {
   const chunksTable = await getChunksTable(db);
   const filesTable = await getFilesTable(db);
 

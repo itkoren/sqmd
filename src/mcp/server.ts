@@ -1,10 +1,10 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { createServer } from 'node:http';
 import type * as lancedb from '@lancedb/lancedb';
-import type { Embedder } from '../embeddings/types.js';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import type { Config } from '../config/schema.js';
+import type { Embedder } from '../embeddings/types.js';
 import { registerTools } from './tools.js';
 
 export async function startMcpServer(
@@ -56,13 +56,19 @@ export async function startMcpServer(
         });
 
         server.connect(sseTransport).catch((err: unknown) => {
-          console.error('[mcp] SSE connection error:', err instanceof Error ? err.message : String(err));
+          console.error(
+            '[mcp] SSE connection error:',
+            err instanceof Error ? err.message : String(err)
+          );
         });
       } else if (req.method === 'POST' && url.pathname === '/messages') {
         // Find the matching SSE transport
         for (const sseTransport of sseTransports.values()) {
           sseTransport.handlePostMessage(req, res).catch((err: unknown) => {
-            console.error('[mcp] Message handling error:', err instanceof Error ? err.message : String(err));
+            console.error(
+              '[mcp] Message handling error:',
+              err instanceof Error ? err.message : String(err)
+            );
           });
           return;
         }

@@ -1,7 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import * as os from 'node:os';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 // Mock heavy dependencies
 vi.mock('../../src/embeddings/transformers.js', () => ({
@@ -83,7 +80,9 @@ vi.mock('../../src/store/db.js', () => ({
 }));
 
 describe('API Integration', () => {
-  let app: ReturnType<typeof import('../../src/api/app.js').createApp> extends Promise<infer T> ? T : ReturnType<typeof import('../../src/api/app.js').createApp>;
+  let app: ReturnType<typeof import('../../src/api/app.js').createApp> extends Promise<infer T>
+    ? T
+    : ReturnType<typeof import('../../src/api/app.js').createApp>;
   let mockDb: Record<string, unknown>;
 
   beforeAll(async () => {
@@ -92,7 +91,7 @@ describe('API Integration', () => {
     const { getDb } = await import('../../src/store/db.js');
     const { loadConfig } = await import('../../src/config/loader.js');
 
-    mockDb = await getDb('/tmp/test-db') as Record<string, unknown>;
+    mockDb = (await getDb('/tmp/test-db')) as Record<string, unknown>;
     const embedder = new TransformersEmbedder('mock', '/tmp');
     const config = loadConfig();
 
@@ -111,7 +110,7 @@ describe('API Integration', () => {
 
       expect(res.status).toBe(200);
 
-      const body = await res.json() as Record<string, unknown>;
+      const body = (await res.json()) as Record<string, unknown>;
       expect(body).toHaveProperty('status');
       expect(body.status).toBe('ok');
       expect(body).toHaveProperty('uptime_seconds');
@@ -131,7 +130,7 @@ describe('API Integration', () => {
       const res = await app.fetch(req);
       expect(res.status).toBe(200);
 
-      const body = await res.json() as Record<string, unknown>;
+      const body = (await res.json()) as Record<string, unknown>;
       expect(body).toHaveProperty('results');
       expect(body).toHaveProperty('query');
       expect(body).toHaveProperty('total');
@@ -169,7 +168,7 @@ describe('API Integration', () => {
 
       expect(res.status).toBe(200);
 
-      const body = await res.json() as Record<string, unknown>;
+      const body = (await res.json()) as Record<string, unknown>;
       expect(body).toHaveProperty('results');
       expect(body.query).toBe('test');
     });
@@ -189,7 +188,7 @@ describe('API Integration', () => {
 
       expect(res.status).toBe(200);
 
-      const body = await res.json() as Record<string, unknown>;
+      const body = (await res.json()) as Record<string, unknown>;
       expect(body).toHaveProperty('documents');
       expect(Array.isArray(body.documents)).toBe(true);
       expect(body).toHaveProperty('total');
@@ -212,7 +211,7 @@ describe('API Integration', () => {
 
       expect(res.status).toBe(200);
 
-      const body = await res.json() as Record<string, unknown>;
+      const body = (await res.json()) as Record<string, unknown>;
       expect(body).toHaveProperty('db');
     });
   });
@@ -228,7 +227,7 @@ describe('API Integration', () => {
       const res = await app.fetch(req);
       expect(res.status).toBe(202);
 
-      const body = await res.json() as Record<string, unknown>;
+      const body = (await res.json()) as Record<string, unknown>;
       expect(body).toHaveProperty('job_id');
       expect(body.status).toBe('accepted');
     });

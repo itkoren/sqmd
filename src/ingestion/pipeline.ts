@@ -1,17 +1,17 @@
 import * as fs from 'node:fs';
 import pLimit from 'p-limit';
 import type { Config } from '../config/schema.js';
-import type { Embedder } from '../embeddings/types.js';
-import { TransformersEmbedder } from '../embeddings/transformers.js';
 import { OllamaEmbedder } from '../embeddings/ollama.js';
-import { getDb, getChunksTable, getFilesTable, createIndexes } from '../store/db.js';
-import { upsertChunks, upsertFile } from '../store/writer.js';
+import { TransformersEmbedder } from '../embeddings/transformers.js';
+import type { Embedder } from '../embeddings/types.js';
+import { createIndexes, getChunksTable, getDb, getFilesTable } from '../store/db.js';
 import { getAllFiles } from '../store/reader.js';
-import { scanDirectory } from './scanner.js';
+import type { ChunkRecord, FileRecord } from '../store/schema.js';
+import { upsertChunks, upsertFile } from '../store/writer.js';
+import { chunkDocument } from './chunker.js';
 import { hashFile, hashPath } from './fingerprint.js';
 import { parseMarkdown } from './parser.js';
-import { chunkDocument } from './chunker.js';
-import type { ChunkRecord, FileRecord } from '../store/schema.js';
+import { scanDirectory } from './scanner.js';
 
 export interface FileError {
   filePath: string;

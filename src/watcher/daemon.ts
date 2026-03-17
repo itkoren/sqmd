@@ -1,5 +1,5 @@
-import chokidar, { type FSWatcher } from 'chokidar';
 import type * as lancedb from '@lancedb/lancedb';
+import chokidar, { type FSWatcher } from 'chokidar';
 import type { Config } from '../config/schema.js';
 import { FileChangeHandler } from './handler.js';
 

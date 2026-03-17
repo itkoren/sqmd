@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
-import * as path from 'node:path';
 import * as os from 'node:os';
+import * as path from 'node:path';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { loadConfig, writeDefaultConfig } from '../../src/config/loader.js';
 import { ConfigSchema } from '../../src/config/schema.js';
 
@@ -101,10 +101,10 @@ describe('Config Loader', () => {
   afterEach(() => {
     fs.rmSync(tmpDir, { recursive: true, force: true });
     // Clean up env vars
-    delete process.env['SQMD_CONFIG'];
-    delete process.env['SQMD_DB_PATH'];
-    delete process.env['SQMD_API_PORT'];
-    delete process.env['SQMD_API_KEY'];
+    delete process.env.SQMD_CONFIG;
+    delete process.env.SQMD_DB_PATH;
+    delete process.env.SQMD_API_PORT;
+    delete process.env.SQMD_API_KEY;
   });
 
   it('should load a valid config file', () => {
@@ -141,7 +141,7 @@ api:
   port: 7777
 `;
     fs.writeFileSync(configPath, yaml);
-    process.env['SQMD_CONFIG'] = configPath;
+    process.env.SQMD_CONFIG = configPath;
 
     const config = loadConfig();
     expect(config.api.port).toBe(7777);
@@ -152,7 +152,7 @@ api:
     fs.writeFileSync(configPath, 'paths:\n  db_path: "/original/path"');
 
     const overridePath = '/override/db/path';
-    process.env['SQMD_DB_PATH'] = overridePath;
+    process.env.SQMD_DB_PATH = overridePath;
 
     const config = loadConfig(configPath);
     expect(config.paths.db_path).toBe(overridePath);
@@ -162,7 +162,7 @@ api:
     const configPath = path.join(tmpDir, 'config.yaml');
     fs.writeFileSync(configPath, 'api:\n  port: 7832');
 
-    process.env['SQMD_API_PORT'] = '8888';
+    process.env.SQMD_API_PORT = '8888';
 
     const config = loadConfig(configPath);
     expect(config.api.port).toBe(8888);
@@ -172,7 +172,7 @@ api:
     const configPath = path.join(tmpDir, 'config.yaml');
     fs.writeFileSync(configPath, '');
 
-    process.env['SQMD_API_KEY'] = 'my-secret-key';
+    process.env.SQMD_API_KEY = 'my-secret-key';
 
     const config = loadConfig(configPath);
     expect(config.api.api_key).toBe('my-secret-key');

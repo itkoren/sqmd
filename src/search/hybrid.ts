@@ -1,7 +1,7 @@
 import type * as lancedb from '@lancedb/lancedb';
 import type { Embedder } from '../embeddings/types.js';
+import { ftsSearch, vectorSearch } from '../store/reader.js';
 import type { SearchResult } from '../store/schema.js';
-import { vectorSearch, ftsSearch } from '../store/reader.js';
 import { prepareQueryForEmbedding } from './query.js';
 
 export type SearchMode = 'hybrid' | 'vector' | 'fts';

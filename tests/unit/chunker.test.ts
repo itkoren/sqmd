@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../src/ingestion/parser.js';
+import { describe, expect, it } from 'vitest';
 import { chunkDocument, estimateTokens } from '../../src/ingestion/chunker.js';
+import { parseMarkdown } from '../../src/ingestion/parser.js';
 
 const defaultInput = {
   fileId: 'test-file-id',
@@ -30,7 +30,7 @@ It has multiple paragraphs.`;
     });
 
     it('should use filename stem as breadcrumb for preamble', () => {
-      const md = `Some preamble content here that is long enough to not be filtered.`;
+      const md = 'Some preamble content here that is long enough to not be filtered.';
 
       const myNotesInput = {
         ...defaultInput,
@@ -113,8 +113,10 @@ This is section content that is long enough to not be filtered out by minChars.`
   describe('token-based splitting', () => {
     it('should split large sections into multiple chunks', () => {
       // Create a large section
-      const paragraphs = Array.from({ length: 50 }, (_, i) =>
-        `Paragraph ${i}: This is a long paragraph with enough content to contribute tokens. It has multiple sentences and should help push the section over the token limit for splitting tests.`
+      const paragraphs = Array.from(
+        { length: 50 },
+        (_, i) =>
+          `Paragraph ${i}: This is a long paragraph with enough content to contribute tokens. It has multiple sentences and should help push the section over the token limit for splitting tests.`
       );
       const md = `# Large Section\n\n${paragraphs.join('\n\n')}`;
 
@@ -126,8 +128,9 @@ This is section content that is long enough to not be filtered out by minChars.`
     });
 
     it('should maintain chunk_index for split chunks', () => {
-      const paragraphs = Array.from({ length: 30 }, (_, i) =>
-        `Paragraph ${i}: This is a long paragraph with enough content.`
+      const paragraphs = Array.from(
+        { length: 30 },
+        (_, i) => `Paragraph ${i}: This is a long paragraph with enough content.`
       );
       const md = `# Section\n\n${paragraphs.join('\n\n')}`;
 
@@ -187,9 +190,9 @@ This is longer content that should not be filtered out because it has enough cha
       const chunks = chunkDocument(doc, { ...defaultInput, minChars: 50 });
 
       // "Short." is only 6 chars + heading text, should be filtered
-      chunks.forEach((chunk) => {
+      for (const chunk of chunks) {
         expect(chunk.text_raw.length).toBeGreaterThanOrEqual(defaultInput.minChars);
-      });
+      }
     });
 
     it('should keep chunks at minChars boundary', () => {
@@ -240,7 +243,9 @@ Content here that is long enough to not be filtered out by minChars.`;
       expect(chunks.length).toBeGreaterThan(0);
       const chunk = chunks[0]!;
       // chunk_id should be fileHash:sectionIdx:chunkIdx
-      expect(chunk.chunk_id).toBe(`${defaultInput.fileHash}:${chunk.section_index}:${chunk.chunk_index}`);
+      expect(chunk.chunk_id).toBe(
+        `${defaultInput.fileHash}:${chunk.section_index}:${chunk.chunk_index}`
+      );
     });
   });
 

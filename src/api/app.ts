@@ -1,12 +1,12 @@
-import { Hono } from 'hono';
 import type * as lancedb from '@lancedb/lancedb';
-import type { Embedder } from '../embeddings/types.js';
+import { Hono } from 'hono';
 import type { Config } from '../config/schema.js';
-import { createApiKeyMiddleware, requestLogger, corsMiddleware } from './middleware.js';
-import { createHealthRouter } from './routes/health.js';
-import { createSearchRouter } from './routes/search.js';
+import type { Embedder } from '../embeddings/types.js';
+import { corsMiddleware, createApiKeyMiddleware, requestLogger } from './middleware.js';
 import { createDocumentsRouter } from './routes/documents.js';
+import { createHealthRouter } from './routes/health.js';
 import { createIndexRouter } from './routes/index.js';
+import { createSearchRouter } from './routes/search.js';
 
 export interface AppState {
   db: lancedb.Connection;
@@ -42,10 +42,7 @@ export function createApp(state: AppState): Hono {
   // Error handler
   app.onError((err, c) => {
     console.error('Unhandled error:', err);
-    return c.json(
-      { error: 'Internal server error', message: err.message },
-      500
-    );
+    return c.json({ error: 'Internal server error', message: err.message }, 500);
   });
 
   return app;

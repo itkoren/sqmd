@@ -1,6 +1,6 @@
 import * as path from 'node:path';
-import type { ParsedDocument, Section } from './parser.js';
 import type { ChunkRecord } from '../store/schema.js';
+import type { ParsedDocument } from './parser.js';
 
 export interface ChunkInput {
   fileId: string;
@@ -103,19 +103,23 @@ function splitSectionIntoChunks(
   return chunks;
 }
 
-export function chunkDocument(
-  doc: ParsedDocument,
-  input: ChunkInput
-): ChunkRecord[] {
+export function chunkDocument(doc: ParsedDocument, input: ChunkInput): ChunkRecord[] {
   const results: ChunkRecord[] = [];
-  const { fileId, fileHash, filePath, fileMtime, maxTokens, minChars, overlapTokens, includeBreadcrumb } = input;
+  const {
+    fileId,
+    fileHash,
+    filePath,
+    fileMtime,
+    maxTokens,
+    minChars,
+    overlapTokens,
+    includeBreadcrumb,
+  } = input;
 
   for (let sectionIdx = 0; sectionIdx < doc.sections.length; sectionIdx++) {
     const section = doc.sections[sectionIdx]!;
 
-    const breadcrumb = includeBreadcrumb
-      ? buildBreadcrumb(section.headingPath, filePath)
-      : '';
+    const breadcrumb = includeBreadcrumb ? buildBreadcrumb(section.headingPath, filePath) : '';
 
     const content = section.content;
     const totalTokens = estimateTokens(breadcrumb + content);

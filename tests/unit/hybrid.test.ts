@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { SearchResult } from '../../src/store/schema.js';
 
 // RRF fusion logic extracted for unit testing

@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import * as fs from 'node:fs';
-import * as path from 'node:path';
 import * as os from 'node:os';
+import * as path from 'node:path';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 // Mock the embedder to avoid downloading models
 vi.mock('../../src/embeddings/transformers.js', () => ({
@@ -83,7 +83,7 @@ describe('IndexPipeline Integration', () => {
   it('should index markdown files and store chunks', async () => {
     const { loadConfig } = await import('../../src/config/loader.js');
     const { IndexPipeline } = await import('../../src/ingestion/pipeline.js');
-    const { getDb, getChunksTable, getFilesTable } = await import('../../src/store/db.js');
+    const { getDb, getFilesTable } = await import('../../src/store/db.js');
     const { getAllFiles } = await import('../../src/store/reader.js');
 
     // Create a minimal config

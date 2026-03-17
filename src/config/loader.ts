@@ -1,8 +1,8 @@
 import * as fs from 'node:fs';
-import * as path from 'node:path';
 import * as os from 'node:os';
+import * as path from 'node:path';
 import yaml from 'js-yaml';
-import { ConfigSchema, type Config } from './schema.js';
+import { type Config, ConfigSchema } from './schema.js';
 
 function expandTilde(p: string): string {
   if (p.startsWith('~/') || p === '~') {
@@ -26,40 +26,40 @@ function expandPaths(config: Config): Config {
 function applyEnvOverrides(config: Config): Config {
   const result = structuredClone(config);
 
-  const dbPath = process.env['SQMD_DB_PATH'];
+  const dbPath = process.env.SQMD_DB_PATH;
   if (dbPath) {
     result.paths.db_path = expandTilde(dbPath);
   }
 
-  const apiPort = process.env['SQMD_API_PORT'];
+  const apiPort = process.env.SQMD_API_PORT;
   if (apiPort) {
-    const port = parseInt(apiPort, 10);
-    if (!isNaN(port)) {
+    const port = Number.parseInt(apiPort, 10);
+    if (!Number.isNaN(port)) {
       result.api.port = port;
     }
   }
 
-  const apiKey = process.env['SQMD_API_KEY'];
+  const apiKey = process.env.SQMD_API_KEY;
   if (apiKey !== undefined) {
     result.api.api_key = apiKey;
   }
 
-  const embBackend = process.env['SQMD_EMBEDDINGS_BACKEND'];
+  const embBackend = process.env.SQMD_EMBEDDINGS_BACKEND;
   if (embBackend === 'transformers' || embBackend === 'ollama') {
     result.embeddings.backend = embBackend;
   }
 
-  const embModel = process.env['SQMD_EMBEDDINGS_MODEL'];
+  const embModel = process.env.SQMD_EMBEDDINGS_MODEL;
   if (embModel) {
     result.embeddings.model = embModel;
   }
 
-  const ollamaUrl = process.env['SQMD_OLLAMA_BASE_URL'];
+  const ollamaUrl = process.env.SQMD_OLLAMA_BASE_URL;
   if (ollamaUrl) {
     result.embeddings.ollama_base_url = ollamaUrl;
   }
 
-  const modelCacheDir = process.env['SQMD_MODEL_CACHE_DIR'];
+  const modelCacheDir = process.env.SQMD_MODEL_CACHE_DIR;
   if (modelCacheDir) {
     result.paths.model_cache_dir = expandTilde(modelCacheDir);
   }
@@ -74,7 +74,7 @@ export function loadConfig(configPath?: string): Config {
   if (configPath) {
     resolvedPath = expandTilde(configPath);
   } else {
-    const envPath = process.env['SQMD_CONFIG'];
+    const envPath = process.env.SQMD_CONFIG;
     if (envPath) {
       resolvedPath = expandTilde(envPath);
     } else {

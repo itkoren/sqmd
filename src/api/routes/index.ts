@@ -1,10 +1,10 @@
-import { Hono } from 'hono';
 import { randomUUID } from 'node:crypto';
 import type * as lancedb from '@lancedb/lancedb';
-import { IndexRequestSchema } from '../models.js';
+import { Hono } from 'hono';
+import type { Config } from '../../config/schema.js';
 import { IndexPipeline } from '../../ingestion/pipeline.js';
 import { getDbStats } from '../../store/db.js';
-import type { Config } from '../../config/schema.js';
+import { IndexRequestSchema } from '../models.js';
 
 interface Job {
   id: string;
@@ -89,7 +89,10 @@ export function createIndexRouter(db: lancedb.Connection, config: Config) {
       });
     } catch (err) {
       return c.json(
-        { error: 'Failed to get status', message: err instanceof Error ? err.message : String(err) },
+        {
+          error: 'Failed to get status',
+          message: err instanceof Error ? err.message : String(err),
+        },
         500
       );
     }

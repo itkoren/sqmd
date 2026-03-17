@@ -1,6 +1,6 @@
-import { Hono } from 'hono';
 import * as fs from 'node:fs';
 import type * as lancedb from '@lancedb/lancedb';
+import { Hono } from 'hono';
 import { getChunksTable, getFilesTable } from '../../store/db.js';
 import { getAllFiles, getFileById, getFileChunks } from '../../store/reader.js';
 
@@ -9,8 +9,8 @@ export function createDocumentsRouter(db: lancedb.Connection) {
 
   // GET /documents — paginated list of indexed files
   router.get('/', async (c) => {
-    const page = parseInt(c.req.query('page') ?? '0', 10);
-    const limit = Math.min(parseInt(c.req.query('limit') ?? '20', 10), 100);
+    const page = Number.parseInt(c.req.query('page') ?? '0', 10);
+    const limit = Math.min(Number.parseInt(c.req.query('limit') ?? '20', 10), 100);
     const pathPrefix = c.req.query('path_prefix');
 
     try {
@@ -32,7 +32,10 @@ export function createDocumentsRouter(db: lancedb.Connection) {
       });
     } catch (err) {
       return c.json(
-        { error: 'Failed to list documents', message: err instanceof Error ? err.message : String(err) },
+        {
+          error: 'Failed to list documents',
+          message: err instanceof Error ? err.message : String(err),
+        },
         500
       );
     }
@@ -70,7 +73,10 @@ export function createDocumentsRouter(db: lancedb.Connection) {
       });
     } catch (err) {
       return c.json(
-        { error: 'Failed to get document', message: err instanceof Error ? err.message : String(err) },
+        {
+          error: 'Failed to get document',
+          message: err instanceof Error ? err.message : String(err),
+        },
         500
       );
     }
@@ -96,7 +102,10 @@ export function createDocumentsRouter(db: lancedb.Connection) {
       return c.text(content, 200, { 'Content-Type': 'text/markdown; charset=utf-8' });
     } catch (err) {
       return c.json(
-        { error: 'Failed to read document', message: err instanceof Error ? err.message : String(err) },
+        {
+          error: 'Failed to read document',
+          message: err instanceof Error ? err.message : String(err),
+        },
         500
       );
     }
