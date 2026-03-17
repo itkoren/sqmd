@@ -23,6 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1] - 2026-03-17
+
+### Changed
+- Scoped npm package name to `@itkoren/sqmd` (unscoped `sqmd` rejected by npm as too similar to `send`)
+- Switched npm publish from `NPM_TOKEN` secret to OIDC trusted publishing (`id-token: write` + `--provenance`)
+- Replaced deprecated `actions/create-release@v1` with `gh release create`; existing releases updated via `gh release edit` fallback
+
+### Fixed
+- Added `repository.url` to `package.json` (required by npm provenance verification)
+- Fixed TS2341 error in `src/search/reranker.ts` — restored bracket notation for private field access with `biome-ignore` comment
+- Added `"performance": { "noDelete": "off" }` to `biome.json` to prevent Biome unsafe fix from converting `delete process.env[X]` to broken `process.env.X = undefined`
+
+---
+
 ## [0.1.0] - 2026-03-17
 
 ### Added

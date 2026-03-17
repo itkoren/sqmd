@@ -1,15 +1,24 @@
 {
   "name": "@itkoren/sqmd",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local semantic search engine over Markdown files",
   "repository": {
     "type": "git",
     "url": "https://github.com/itkoren/sqmd.git"
   },
   "type": "module",
-  "engines": { "node": ">=22.0.0" },
-  "bin": { "sqmd": "dist/index.js" },
-  "files": ["dist", "README.md", "LICENSE", "CHANGELOG.md"],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "bin": {
+    "sqmd": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
