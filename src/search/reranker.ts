@@ -55,7 +55,8 @@ export class CrossEncoderReranker {
 let rerankerInstance: CrossEncoderReranker | null = null;
 
 export function getReranker(modelName: string, cacheDir: string): CrossEncoderReranker {
-  if (!rerankerInstance || rerankerInstance.modelName !== modelName) {
+  // biome-ignore lint/complexity/useLiteralKeys: bracket notation required to access private field
+  if (!rerankerInstance || rerankerInstance['modelName'] !== modelName) {
     rerankerInstance = new CrossEncoderReranker(modelName, cacheDir);
   }
   return rerankerInstance;
