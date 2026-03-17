@@ -93,12 +93,16 @@ jobs:
             exit 1
           fi
           echo "::add-mask::$OIDC_TOKEN"
+          echo "NPMRC before:"
+          cat "$NPM_CONFIG_USERCONFIG" | grep -v authToken
           # Replace GitHub token with OIDC token in npm config
           npm config delete //registry.npmjs.org/:_authToken
           npm config set //registry.npmjs.org/:_authToken "$OIDC_TOKEN"
-          npm publish --provenance --access public 2>&1; STATUS=$?
-          if [ $STATUS -ne 0 ]; then
-            echo "=== NPM DEBUG LOG (last 100 lines, auth tokens masked) ==="
-            tail -100 /home/runner/.npm/_logs/*.log 2>/dev/null | grep -v "authToken\|password\|_auth\b"
-          fi
-          exit $STATUS
+          echo "NPMRC after (keys only):"
+          npm config list 2>/dev/null | grep -v authToken
+          npm publish --provenance --access public 2>&1 || {
+            STATUS=$?
+            echo "=== NPM DEBUG LOG ==="
+            tail -200 /home/runner/.npm/_logs/*.log 2>/dev/null | grep -v "authToken\|_password\|_auth[^o]"
+            exit $STATUS
+          }
