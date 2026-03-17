@@ -81,11 +81,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Remove static auth token for OIDC trusted publishing
+        run: sed -i '/authToken/d' "$NPM_CONFIG_USERCONFIG"
+
       - name: Publish to npm
-        run: |
-          echo "npm version: $(npm --version)"
-          echo "node version: $(node --version)"
-          echo "npmrc contents:"
-          cat "$NPM_CONFIG_USERCONFIG" || echo "(no npmrc)"
-          echo "ACTIONS_ID_TOKEN_REQUEST_URL set: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL != '' }}"
-          npm publish --provenance --access public --loglevel=verbose 2>&1 | tail -30
+        run: npm publish --provenance --access public
