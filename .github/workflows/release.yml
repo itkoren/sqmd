@@ -93,24 +93,25 @@ jobs:
             exit 1
           fi
           echo "::add-mask::$OIDC_TOKEN"
-          echo "NPMRC before:"
-          cat "$NPM_CONFIG_USERCONFIG" | grep -v authToken
-          # Replace GitHub token with OIDC token in npm config
-          npm config delete //registry.npmjs.org/:_authToken
-          npm config set //registry.npmjs.org/:_authToken "$OIDC_TOKEN"
-          echo "NPMRC after (keys only):"
-          npm config list 2>/dev/null | grep -v authToken
-          set +e
-          npm publish --provenance --access public 2>&1
-          PUB_STATUS=$?
-          set -e
-          if [ $PUB_STATUS -ne 0 ]; then
-            echo "=== NPM DEBUG LOG ==="
-            ls /home/runner/.npm/_logs/ 2>&1
-            LOGFILE=$(ls /home/runner/.npm/_logs/*-debug-0.log 2>/dev/null | head -1)
-            if [ -n "$LOGFILE" ]; then
-              echo "Log: $LOGFILE"
-              grep -E "verb|http|fetch|PUT|response|404|error|auth" "$LOGFILE" | tail -100
-            fi
-            exit $PUB_STATUS
+          # Try token exchange: POST OIDC JWT to npm tokens endpoint
+          echo "Attempting OIDC token exchange with npm registry..."
+          EXCHANGE_RESPONSE=$(curl -sS \
+            -X POST \
+            -H "Authorization: Bearer $OIDC_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            -d '{"type":"automation"}' \
+            https://registry.npmjs.org/-/npm/v1/tokens 2>&1)
+          echo "Exchange response: $(echo "$EXCHANGE_RESPONSE" | jq -r '. | del(.token) | tostring' 2>/dev/null || echo "$EXCHANGE_RESPONSE" | head -c 500)"
+          NPM_TOKEN=$(echo "$EXCHANGE_RESPONSE" | jq -r '.token // empty' 2>/dev/null || echo "")
+          if [[ -n "$NPM_TOKEN" ]]; then
+            echo "::add-mask::$NPM_TOKEN"
+            echo "Token exchange succeeded! Publishing with exchanged npm token."
+            npm config delete //registry.npmjs.org/:_authToken
+            npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+          else
+            echo "Token exchange failed. Trying OIDC JWT directly as bearer token."
+            npm config delete //registry.npmjs.org/:_authToken
+            npm config set //registry.npmjs.org/:_authToken "$OIDC_TOKEN"
           fi
+          npm publish --provenance --access public
