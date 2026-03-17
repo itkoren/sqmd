@@ -84,4 +84,5 @@ jobs:
       - name: Publish to npm
         run: |
           npm config delete //registry.npmjs.org/:_authToken
+          unset NODE_AUTH_TOKEN
           npm publish --provenance --access public
