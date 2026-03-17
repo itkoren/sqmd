@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Coverage reports
+coverage/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# LanceDB data (runtime data, not source)
+*.lance/
+*.db/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Claude Code memory bank & local AI context (not for version control)
+CLAUDE.md
+CLAUDE-*.md
+GEMINI.md
+
+# Claude Code local settings (personal / machine-specific)
+.claude/settings.local.json
+
+# Auto-generated reports
+reports/

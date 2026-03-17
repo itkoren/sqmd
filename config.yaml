@@ -1,0 +1,43 @@
+paths:
+  watch_dirs:
+    - "~/notes"
+  db_path: "~/.sqmd/lancedb"
+  model_cache_dir: "~/.sqmd/models"
+
+embeddings:
+  backend: "transformers"
+  model: "nomic-ai/nomic-embed-text-v1.5"
+  batch_size: 64
+  ollama_base_url: "http://localhost:11434"
+
+chunking:
+  max_tokens: 512
+  min_chars: 50
+  include_breadcrumb: true
+  overlap_tokens: 64
+
+search:
+  default_top_k: 10
+  rrf_k: 60
+  rerank: false
+  rerank_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  rerank_top_n: 20
+
+watcher:
+  enabled: true
+  debounce_ms: 3000
+  extensions:
+    - ".md"
+    - ".mdx"
+  ignore_patterns:
+    - "**/.git/**"
+    - "**/node_modules/**"
+
+api:
+  host: "127.0.0.1"
+  port: 7832
+  api_key: ""
+
+mcp:
+  transport: "stdio"
+  sse_port: 7833
