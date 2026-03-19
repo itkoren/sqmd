@@ -84,32 +84,5 @@ jobs:
       - name: Upgrade npm to latest
         run: npm install -g npm@latest
 
-      - name: Diagnose OIDC exchange
-        run: |
-          echo "npm version: $(npm --version)"
-          echo "node version: $(node --version)"
-          # Fetch OIDC token with npm's expected audience
-          OIDC_TOKEN=$(curl -sS \
-            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm%3Aregistry.npmjs.org" | jq -r '.value // empty')
-          echo "OIDC token chars: ${#OIDC_TOKEN}"
-          if [[ -z "$OIDC_TOKEN" ]]; then
-            echo "ERROR: no token with audience=npm:registry.npmjs.org"
-            exit 1
-          fi
-          echo "::add-mask::$OIDC_TOKEN"
-          # Decode claims (header.payload.sig — print payload)
-          PAYLOAD=$(echo "$OIDC_TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null || echo "decode_failed")
-          echo "OIDC claims: $(echo "$PAYLOAD" | jq '{aud,iss,repository,repository_owner,job_workflow_ref,ref,environment}' 2>/dev/null || echo "$PAYLOAD")"
-          # Try the exchange endpoint manually
-          PKG="%40itkoren%2Fsqmd"
-          EXCHANGE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}" \
-            -X POST \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $OIDC_TOKEN" \
-            "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/$PKG" 2>&1)
-          echo "Exchange response: $(echo "$EXCHANGE" | grep -v 'HTTP_STATUS')"
-          echo "Exchange HTTP status: $(echo "$EXCHANGE" | grep 'HTTP_STATUS')"
-
       - name: Publish to npm
         run: npm publish --provenance --access public
